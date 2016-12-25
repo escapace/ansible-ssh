@@ -5,5 +5,7 @@
       provision_docker_inventory_group: "{{ groups['test-images'] }}"
 
 - hosts: test-images
+  vars:
+    ssh_role_debug: true
   roles:
   - role: epiloque.ssh
