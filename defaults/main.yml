@@ -1,4 +1,4 @@
 ---
 
-ssh_keyboard_interactive_group:
+ssh_keyboard_interactive_group: kbd-interactive
 

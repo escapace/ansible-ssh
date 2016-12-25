@@ -15,10 +15,13 @@
   notify:
     - sshd restart
 
+- name: add keyboard interactive group
+  group: name={{ ssh_keyboard_interactive_group }} system=true state=present
+  when: ssh_keyboard_interactive_group is defined and ssh_keyboard_interactive_group != ""
+
 - name: Ensure that sshd is running
   service: name=sshd state=started enabled=yes
   ignore_errors: ssh_role_debug
-
 
 - name: create ssh firewall rules
   template: src=templates/1002-ssh.conf.j2 dest=/etc/ferm/ferm.d/1002-ssh.conf owner=root group=root
@@ -36,3 +39,5 @@
     mode: 0644
     group: utmp
     state: file
+  ignore_errors: ssh_role_debug
+
