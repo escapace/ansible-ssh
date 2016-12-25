@@ -3,6 +3,7 @@
 - name: install openssh
   action: "{{ ansible_pkg_mgr }} name={{ item }} state=present"
   with_items:
+    - openssh-server
     - openssh
     - mosh
 
@@ -16,6 +17,8 @@
 
 - name: Ensure that sshd is running
   service: name=sshd state=started enabled=yes
+  ignore_errors: ssh_role_debug
+
 
 - name: create ssh firewall rules
   template: src=templates/1002-ssh.conf.j2 dest=/etc/ferm/ferm.d/1002-ssh.conf owner=root group=root
