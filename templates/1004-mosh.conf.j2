@@ -1,0 +1,6 @@
+domain (ip6 ip) table filter {
+    chain INPUT {
+        # allow mosh connections
+        proto udp dport 60000:61000 ACCEPT;
+    }
+}

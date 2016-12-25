@@ -1,0 +1,5 @@
+domain (ip6 ip) table filter {
+    chain INPUT {
+        proto tcp dport ssh ACCEPT;
+    }
+}
