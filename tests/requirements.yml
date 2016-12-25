@@ -1,0 +1,8 @@
+- src: epiloque.provision_docker
+  name: provision_docker
+
+- src: epiloque.packagecloud
+  name: epiloque.packagecloud
+
+- src: epiloque.ferm
+  name: epiloque.ferm
