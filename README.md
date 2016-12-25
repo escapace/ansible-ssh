@@ -16,7 +16,7 @@ ssh role
 Available variables are listed below, along with default values:
 
 ```yaml
-ssh_keyboard_interactive_group:
+ssh_keyboard_interactive_group: kbd-interactive
 ```
 
 ## Example Playbook
