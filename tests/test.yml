@@ -6,6 +6,7 @@
 
 - hosts: test-images
   vars:
+    ferm_role_debug: true
     ssh_role_debug: true
   roles:
   - role: epiloque.ssh

@@ -21,7 +21,12 @@
 
 - name: Ensure that sshd is running
   service: name=sshd state=started enabled=yes
-  ignore_errors: ssh_role_debug
+  register: ssh_service
+  ignore_errors: True
+
+- name: failed to start sshd
+  fail: msg="failed to start sshd"
+  when: (ssh_service|failed and (ssh_role_debug|bool == false))
 
 - name: create ssh firewall rules
   template: src=templates/1002-ssh.conf.j2 dest=/etc/ferm/ferm.d/1002-ssh.conf owner=root group=root
@@ -39,5 +44,5 @@
     mode: 0644
     group: utmp
     state: file
-  ignore_errors: ssh_role_debug
+  ignore_errors: True
 
