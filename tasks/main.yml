@@ -1,4 +1,4 @@
 ---
 
-- include: ssh.yml
+- include_tasks: ssh.yml
   when: ansible_os_family == "RedHat"
