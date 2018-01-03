@@ -11,5 +11,5 @@ ssh_keyboard_interactive_group: kbd-interactive
 ```yaml
 - hosts: servers
   roles:
-    - epiloque.ssh
+    - escapace.ssh
 ```
