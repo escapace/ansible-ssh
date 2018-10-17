@@ -1,11 +1,9 @@
 ---
 
-- name: install openssh
-  action: "{{ ansible_pkg_mgr }} name={{ item }} state=present"
-  with_items:
-    - openssh-server
-    - openssh
-    - mosh
+- name: install packages
+  package:
+    name: ["openssh-server", "openssh", "mosh"]
+    state: present
 
 - name: set ssh configuration
   template: src=templates/ssh_config.j2 dest=/etc/ssh/ssh_config owner=root group=root
@@ -26,7 +24,7 @@
 
 - name: failed to start sshd
   fail: msg="failed to start sshd"
-  when: (ssh_service|failed and (ssh_role_debug|bool == false))
+  when: (ssh_service is failed and (ssh_role_debug|bool == false))
 
 - name: create ssh firewall rules
   template: src=templates/1002-ssh.conf.j2 dest=/etc/ferm/ferm.d/1002-ssh.conf owner=root group=root
