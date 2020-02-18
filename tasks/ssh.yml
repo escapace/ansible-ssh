@@ -15,7 +15,7 @@
 
 - name: add keyboard interactive group
   group: name={{ ssh_keyboard_interactive_group }} system=true state=present
-  when: ssh_keyboard_interactive_group is defined and ssh_keyboard_interactive_group != ""
+  when: ssh_keyboard_interactive_group is defined and (ssh_keyboard_interactive_group | length > 0)
 
 - name: Ensure that sshd is running
   service: name=sshd state=started enabled=yes
@@ -24,7 +24,7 @@
 
 - name: failed to start sshd
   fail: msg="failed to start sshd"
-  when: (ssh_service is failed and (ssh_role_debug|bool == false))
+  when: (ssh_service is failed and (not ssh_role_debug|bool))
 
 - name: create ssh firewall rules
   template: src=templates/1002-ssh.conf.j2 dest=/etc/ferm/ferm.d/1002-ssh.conf owner=root group=root
@@ -43,4 +43,3 @@
     group: utmp
     state: file
   ignore_errors: True
-
