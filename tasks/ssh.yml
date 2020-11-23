@@ -6,10 +6,10 @@
     state: present
 
 - name: set ssh configuration
-  template: src=templates/ssh_config.j2 dest=/etc/ssh/ssh_config owner=root group=root
+  template: src=templates/ssh_config.j2 dest=/etc/ssh/ssh_config owner=root group=root mode=0644
 
 - name: set sshd configuration
-  template: src=templates/sshd_config.j2 dest=/etc/ssh/sshd_config owner=root group=root
+  template: src=templates/sshd_config.j2 dest=/etc/ssh/sshd_config owner=root group=root mode=0600
   notify:
     - sshd restart
 
@@ -27,12 +27,12 @@
   when: (ssh_service is failed and (not ssh_role_debug|bool))
 
 - name: create ssh firewall rules
-  template: src=templates/1002-ssh.conf.j2 dest=/etc/ferm/ferm.d/1002-ssh.conf owner=root group=root
+  template: src=templates/1002-ssh.conf.j2 dest=/etc/ferm/ferm.d/1002-ssh.conf owner=root group=root mode=0644
   notify:
     - ferm restart
 
 - name: create mosh firewall rules
-  template: src=templates/1004-mosh.conf.j2 dest=/etc/ferm/ferm.d/1004-mosh.conf owner=root group=root
+  template: src=templates/1004-mosh.conf.j2 dest=/etc/ferm/ferm.d/1004-mosh.conf owner=root group=root mode=0644
   notify:
     - ferm restart
 
