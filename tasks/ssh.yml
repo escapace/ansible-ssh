@@ -27,10 +27,10 @@
   when: (ssh_service is failed and (not ssh_role_debug|bool))
 
 - name: create ssh firewall rules
-  template: src=templates/1002-ssh.conf.j2 dest=/etc/ferm/ferm.d/1002-ssh.conf owner=root group=root mode=0644
+  template: src=templates/ferm-ssh.conf.j2 dest=/etc/ferm/ferm.d/1010-ssh.conf owner=root group=root mode=0600
 
 - name: create mosh firewall rules
-  template: src=templates/1004-mosh.conf.j2 dest=/etc/ferm/ferm.d/1004-mosh.conf owner=root group=root mode=0644
+  template: src=templates/ferm-mosh.conf.j2 dest=/etc/ferm/ferm.d/1010-mosh.conf owner=root group=root mode=0600
 
 - name: create lastlog file
   file:
