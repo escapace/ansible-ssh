@@ -2,3 +2,4 @@
 
 - name: sshd restart
   service: name=sshd state=restarted
+  when: not ssh_role_debug|bool
