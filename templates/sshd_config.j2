@@ -1,8 +1,12 @@
+{% if ssh_password_authentication %}
+AuthenticationMethods publickey password
+{% else %}
 AuthenticationMethods publickey
+{% endif %}
 AuthorizedKeysFile .ssh/authorized_keys
 GSSAPIAuthentication no
 KbdInteractiveAuthentication no
-PasswordAuthentication no
+PasswordAuthentication {{ ssh_password_authentication | ternary('yes', 'no') }}
 PermitEmptyPasswords no
 PermitRootLogin no
 PubkeyAuthentication yes
@@ -19,7 +23,13 @@ AcceptEnv XMODIFIERS
 
 {% if ssh_keyboard_interactive_group is defined and ssh_keyboard_interactive_group != "" %}
 Match Group {{ ssh_keyboard_interactive_group }}
+{% if ssh_password_authentication %}
+  AuthenticationMethods publickey,keyboard-interactive:pam password,keyboard-interactive:pam
+{% else %}
   AuthenticationMethods publickey,keyboard-interactive:pam
+{% endif %}
+
   KbdInteractiveAuthentication yes
+  PasswordAuthentication {{ ssh_password_authentication | ternary('yes', 'no') }}
   PubkeyAuthentication yes
 {% endif %}
