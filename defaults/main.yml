@@ -1,5 +1,4 @@
 ---
-
 ssh_keyboard_interactive_group: kbd_interactive
 ssh_role_debug: false
 ssh_password_authentication: false
