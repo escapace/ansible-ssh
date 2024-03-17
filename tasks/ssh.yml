@@ -1,8 +1,7 @@
 ---
-
 - name: install packages
   ansible.builtin.package:
-    name: ["openssh-server", "openssh", "mosh"]
+    name: [openssh-server, openssh, mosh]
     state: present
 
 - name: set ssh configuration
@@ -11,7 +10,7 @@
     dest: /etc/ssh/ssh_config.d/10-defaults.conf
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
 
 - name: set sshd configuration
   ansible.builtin.template:
@@ -19,7 +18,7 @@
     dest: /etc/ssh/sshd_config.d/10-defaults.conf
     owner: root
     group: root
-    mode: 0600
+    mode: "0600"
   notify:
     - sshd restart
 
@@ -43,7 +42,7 @@
     dest: /etc/ferm/ferm.d/1010-ssh.conf
     owner: root
     group: root
-    mode: 0600
+    mode: "0600"
 
 - name: create mosh firewall rules
   ansible.builtin.template:
@@ -51,12 +50,12 @@
     dest: /etc/ferm/ferm.d/1010-mosh.conf
     owner: root
     group: root
-    mode: 0600
+    mode: "0600"
 
 - name: create lastlog file
   ansible.builtin.file:
     path: /var/log/lastlog
-    mode: 0644
+    mode: "0644"
     group: utmp
     state: file
   ignore_errors: true
