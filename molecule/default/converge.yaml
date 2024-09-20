@@ -5,4 +5,4 @@
     ferm_role_debug: true
     ssh_role_debug: true
   roles:
-    - role: escapace.ssh
+    - role: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"

@@ -1,3 +1,3 @@
 ---
-- ansible.builtin.include_tasks: ssh.yml
+- ansible.builtin.include_tasks: ssh.yaml
   when: ansible_os_family == "RedHat"
