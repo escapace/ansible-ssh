@@ -1,4 +1,7 @@
 ---
-ssh_keyboard_interactive_group: kbd_interactive
+ssh_keyboard_interactive_group: keyboard-interactive
 ssh_role_debug: false
 ssh_password_authentication: false
+# ssh_keyboard_interactive_excluded_cidrs:
+#   - fd7a:115c:a1e0::/48
+#   - 100.64.0.0/10

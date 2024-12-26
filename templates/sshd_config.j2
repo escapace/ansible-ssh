@@ -21,6 +21,19 @@ AcceptEnv LC_IDENTIFICATION LC_ALL LANGUAGE
 AcceptEnv LC_PAPER LC_NAME LC_ADDRESS LC_TELEPHONE LC_MEASUREMENT
 AcceptEnv XMODIFIERS
 
+{% if ssh_keyboard_interactive_group is defined and ssh_keyboard_interactive_group != "" and ssh_keyboard_interactive_excluded_cidrs is defined %}
+Match Group {{ ssh_keyboard_interactive_group }} Address {{ ssh_keyboard_interactive_excluded_cidrs | map('ansible.utils.ipaddr', 'network/prefix') | join(',') }}
+{% if ssh_password_authentication %}
+  AuthenticationMethods publickey password
+{% else %}
+  AuthenticationMethods publickey
+{% endif %}
+
+  KbdInteractiveAuthentication no
+  PasswordAuthentication {{ ssh_password_authentication | ternary('yes', 'no') }}
+  PubkeyAuthentication yes
+{% endif %}
+
 {% if ssh_keyboard_interactive_group is defined and ssh_keyboard_interactive_group != "" %}
 Match Group {{ ssh_keyboard_interactive_group }}
 {% if ssh_password_authentication %}

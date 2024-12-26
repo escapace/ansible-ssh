@@ -1,4 +1,15 @@
 ---
+- name: assert ssh_keyboard_interactive_excluded_cidrs is a non-empty array of valid cidr addresses
+  ansible.builtin.assert:
+    that:
+      - ssh_keyboard_interactive_excluded_cidrs | length > 0
+      - ssh_keyboard_interactive_excluded_cidrs | map('ansible.utils.ipaddr') | reject('equalto', false) | list | length == ssh_keyboard_interactive_excluded_cidrs | length
+    fail_msg: >
+      The variable ssh_keyboard_interactive_excluded_cidrs must be defined and contain a non-empty array of valid IPv4 or IPv6 CIDR addresses.
+    success_msg: >
+      ssh_keyboard_interactive_excluded_cidrs is defined and contains a non-empty array of valid CIDR addresses.
+  when: ssh_keyboard_interactive_excluded_cidrs is defined
+
 - name: install packages
   ansible.builtin.package:
     name: [openssh-server, openssh, mosh]
