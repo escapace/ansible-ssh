@@ -20,6 +20,7 @@ AcceptEnv LANG LC_CTYPE LC_NUMERIC LC_TIME LC_COLLATE LC_MONETARY LC_MESSAGES
 AcceptEnv LC_IDENTIFICATION LC_ALL LANGUAGE
 AcceptEnv LC_PAPER LC_NAME LC_ADDRESS LC_TELEPHONE LC_MEASUREMENT
 AcceptEnv XMODIFIERS
+AcceptEnv TERM_PROGRAM_VERSION TERM_PROGRAM COLORTERM 
 
 {% if ssh_keyboard_interactive_group is defined and ssh_keyboard_interactive_group != "" and ssh_keyboard_interactive_excluded_cidrs is defined %}
 Match Group {{ ssh_keyboard_interactive_group }} Address {{ ssh_keyboard_interactive_excluded_cidrs | map('ansible.utils.ipaddr', 'network/prefix') | join(',') }}
