@@ -44,7 +44,6 @@
   ansible.builtin.systemd_service:
     name: sshd.service
     enabled: true
-  when: not ssh_role_debug
 
 - name: check for ferm rule configuration directory
   ansible.builtin.stat:

@@ -1,8 +1,6 @@
 ---
 - name: Converge
   hosts: all
-  vars:
-    ssh_role_debug: true
   pre_tasks:
     - name: create optional ferm integration directory
       ansible.builtin.file:

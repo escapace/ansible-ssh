@@ -1,44 +1,20 @@
 ---
-- name: ssh check sshd is active
-  ansible.builtin.command:
-    argv:
-      - /usr/bin/systemctl
-      - is-active
-      - --quiet
-      - sshd.service
-  register: ssh_sshd_active
-  changed_when: false
-  failed_when: false
-  when: not ssh_role_debug
-  listen: ssh restart sshd
+- name: ssh gather service facts before restart
+  ansible.builtin.service_facts:
+  listen:
+    - ssh restart sshd
+    - ssh restart ferm
 
 - name: ssh restart active sshd
   ansible.builtin.systemd_service:
     name: sshd.service
     state: restarted
-  when:
-    - not ssh_role_debug
-    - ssh_sshd_active.rc | default(1) == 0
+  when: (ansible_facts.services | default({})).get("sshd.service", {}).get("state") == "running"
   listen: ssh restart sshd
-
-- name: ssh check ferm is active
-  ansible.builtin.command:
-    argv:
-      - /usr/bin/systemctl
-      - is-active
-      - --quiet
-      - ferm.service
-  register: ssh_ferm_active
-  changed_when: false
-  failed_when: false
-  when: not ssh_role_debug
-  listen: ssh restart ferm
 
 - name: ssh restart active ferm
   ansible.builtin.systemd_service:
     name: ferm.service
     state: restarted
-  when:
-    - not ssh_role_debug
-    - ssh_ferm_active.rc | default(1) == 0
+  when: (ansible_facts.services | default({})).get("ferm.service", {}).get("state") == "running"
   listen: ssh restart ferm
