@@ -2,7 +2,12 @@
 - name: Converge
   hosts: all
   vars:
-    ferm_role_debug: true
     ssh_role_debug: true
+  pre_tasks:
+    - name: create optional ferm integration directory
+      ansible.builtin.file:
+        path: /etc/ferm/ferm.d
+        state: directory
+        mode: "0755"
   roles:
     - role: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"

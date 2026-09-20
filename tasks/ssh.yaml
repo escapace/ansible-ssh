@@ -12,7 +12,7 @@
 
 - name: install packages
   ansible.builtin.package:
-    name: [openssh-server, openssh, mosh]
+    name: [openssh-server, openssh-clients]
     state: present
 
 - name: set ssh configuration
@@ -31,7 +31,7 @@
     group: root
     mode: "0600"
   notify:
-    - sshd restart
+    - ssh restart sshd
 
 - name: add keyboard interactive group
   ansible.builtin.group:
@@ -40,12 +40,16 @@
     state: present
   when: ssh_keyboard_interactive_group is defined and (ssh_keyboard_interactive_group | length > 0)
 
-- name: ensure that sshd is running
-  ansible.builtin.service:
-    name: sshd
-    state: started
+- name: enable sshd
+  ansible.builtin.systemd_service:
+    name: sshd.service
     enabled: true
-  when: not ssh_role_debug|bool
+  when: not ssh_role_debug
+
+- name: check for ferm rule configuration directory
+  ansible.builtin.stat:
+    path: /etc/ferm/ferm.d
+  register: ssh_ferm_rule_directory
 
 - name: create ssh firewall rules
   ansible.builtin.template:
@@ -54,14 +58,9 @@
     owner: root
     group: root
     mode: "0600"
-
-- name: create mosh firewall rules
-  ansible.builtin.template:
-    src: templates/ferm-mosh.conf.j2
-    dest: /etc/ferm/ferm.d/1010-mosh.conf
-    owner: root
-    group: root
-    mode: "0600"
+  when: ssh_ferm_rule_directory.stat.isdir | default(false)
+  notify:
+    - ssh restart ferm
 
 - name: create lastlog file
   ansible.builtin.file:
