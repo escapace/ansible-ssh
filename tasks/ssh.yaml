@@ -45,21 +45,35 @@
     name: sshd.service
     enabled: true
 
-- name: check for ferm rule configuration directory
+- name: check for firewalld policy directory
   ansible.builtin.stat:
-    path: /etc/ferm/ferm.d
-  register: ssh_ferm_rule_directory
+    path: /etc/firewalld/policies
+  register: ssh_firewalld_policy_directory
 
-- name: create ssh firewall rules
+- name: check installed firewalld validator
+  ansible.builtin.stat:
+    path: /usr/bin/firewall-offline-cmd
+  register: ssh_firewalld_validator
+  when: ssh_firewalld_policy_directory.stat.isdir | default(false)
+
+- name: require validator before writing firewalld policy
+  ansible.builtin.assert:
+    that: ssh_firewalld_validator.stat.executable | default(false)
+    fail_msg: the firewalld policy directory exists but firewall-offline-cmd is unavailable
+  when:
+    - not ansible_check_mode
+    - ssh_firewalld_policy_directory.stat.isdir | default(false)
+
+- name: allow ssh to the host from any zone
   ansible.builtin.template:
-    src: templates/ferm-ssh.conf.j2
-    dest: /etc/ferm/ferm.d/1010-ssh.conf
+    src: templates/ssh-host.xml.j2
+    dest: /etc/firewalld/policies/ssh-host.xml
     owner: root
     group: root
-    mode: "0600"
-  when: ssh_ferm_rule_directory.stat.isdir | default(false)
+    mode: "0644"
+  when: ssh_firewalld_policy_directory.stat.isdir | default(false)
   notify:
-    - ssh restart ferm
+    - ssh reload firewalld
 
 - name: create lastlog file
   ansible.builtin.file:

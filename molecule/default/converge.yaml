@@ -2,9 +2,14 @@
 - name: Converge
   hosts: all
   pre_tasks:
-    - name: create optional ferm integration directory
+    - name: install firewalld for optional integration testing
+      ansible.builtin.package:
+        name: firewalld
+        state: present
+
+    - name: create optional firewalld policy directory
       ansible.builtin.file:
-        path: /etc/ferm/ferm.d
+        path: /etc/firewalld/policies
         state: directory
         mode: "0755"
   roles:

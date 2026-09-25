@@ -1,0 +1,51 @@
+---
+- name: verify ssh firewalld policy
+  hosts: all
+  tasks:
+    - name: inspect owned ssh policy
+      ansible.builtin.stat:
+        path: /etc/firewalld/policies/ssh-host.xml
+      register: ssh_policy_file
+
+    - name: read owned ssh policy
+      ansible.builtin.slurp:
+        src: /etc/firewalld/policies/ssh-host.xml
+      register: ssh_policy_content
+
+    - name: verify ssh policy scope and permissions
+      ansible.builtin.assert:
+        that:
+          - ssh_policy_file.stat.pw_name == 'root'
+          - ssh_policy_file.stat.gr_name == 'root'
+          - ssh_policy_file.stat.mode == '0644'
+          - '''<policy target="CONTINUE" priority="-1">'' in (ssh_policy_content.content | b64decode)'
+          - '''<ingress-zone name="ANY"/>'' in (ssh_policy_content.content | b64decode)'
+          - '''<egress-zone name="HOST"/>'' in (ssh_policy_content.content | b64decode)'
+          - '''<service name="ssh"/>'' in (ssh_policy_content.content | b64decode)'
+
+    - name: inspect obsolete ferm configuration directory
+      ansible.builtin.stat:
+        path: /etc/ferm/ferm.d
+      register: ssh_ferm_directory
+
+    - name: verify no ferm configuration was created
+      ansible.builtin.assert:
+        that: not ssh_ferm_directory.stat.exists
+
+    - name: remove optional firewalld policy directory for standalone check
+      ansible.builtin.file:
+        path: /etc/firewalld/policies
+        state: absent
+
+    - name: rerun ssh role without firewalld policy directory
+      ansible.builtin.include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+
+    - name: inspect optional firewalld policy directory after standalone run
+      ansible.builtin.stat:
+        path: /etc/firewalld/policies
+      register: ssh_standalone_policy_directory
+
+    - name: verify standalone ssh did not create firewalld policy directory
+      ansible.builtin.assert:
+        that: not ssh_standalone_policy_directory.stat.exists
